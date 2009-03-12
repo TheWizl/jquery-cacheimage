@@ -1,0 +1,124 @@
+---
+layout: default
+title: cacheImagei - a jQuery plugin
+---
+
+<h1>cacheImage: a jQuery plugin</h1>
+
+<p>
+  imageCache is a simple jQuery plugin for pre-caching images. The plugin can be used to
+  eliminate flashes of unstyled content (FOUC) and improve perceived page load time.
+  Callbacks for load, error and abort events are provided.
+</p>
+
+<h2>Getting the Code</h2>
+
+<p>
+  You can download the code at the
+  <a href="http://plugins.jquery.com/project/cacheimage">jQuery plugin site</a>
+  or view the <a
+    href="http://github.com/alexrabarts/jquery-cacheimage/tree"
+  >GitHub respository</a>.
+</p>
+
+<h2>Demo</h2>
+
+<script type="text/javascript" src="http://plugins.jquery.com/files/jquery.cacheimage.js.txt"></script>
+
+<p>
+  There's a large-ish (300k) image hidden in the page just below. The status message
+  indicates whether this image has been loaded or not.  Click the first button to
+  apply cacheImage to the image.  Once the image has been pre-cached, press the
+  second button to reveal the image (it will appear instantly).
+</p>
+
+<p>
+  <button id="load">Pre-cache image</button>
+  <button id="reveal" disabled="disabled">Reveal image</button>
+  <button id="hide" disabled="disabled">Hide image</button>
+</p>
+
+<p>
+  <strong>Status:</strong> <span id="status">Not loaded</span>
+</p>
+
+<p>
+  <img src="images/large-photo.jpg" alt="A large photo" id="largePhoto" style="display: none;" />
+</p>
+
+<script type="text/javascript">
+  (function ($) {
+    var reveal = $('#reveal');
+    var hide   = $('#hide');
+
+    setDisabled(true);
+
+    $('#load').click(function () {
+      this.disabled = true;
+
+      var status = $('#status').html('Loading');
+      var image  = $('#largePhoto');
+
+      // Make sure the image isn't cached already
+      image.attr('src', image.attr('src') + '?' + Math.random());
+
+      image.cacheImage({
+        load: function () {
+          status.html('Loaded');
+
+          setDisabled(false);
+
+          reveal.click(function () { image.show(); });
+          hide.click(function () { image.hide(); });
+        }
+      });
+    })[0].disabled = false; // Ensure not disabled e.g. after a page refresh
+
+    function setDisabled(val) {
+      reveal[0].disabled = hide[0].disabled = val;
+    }
+  })(jQuery);
+</script>
+
+<h2>Usage</h2>
+
+<p>Cache an image:</p>
+
+<pre>
+  $.cacheImage('/path/to/image.png');
+  // or if you have images hidden in the DOM:
+  $('#myImage').cacheImage();
+</pre>
+
+<p>Cache several images:</p>
+
+<pre>
+  $.cacheImage([
+    '/path/to/an/image.png',
+    '/path/to/another/image.png'
+  ])
+  // or if you have images hidden in the DOM:
+  $('#myImages img').cacheImage();
+</pre>
+
+<p>Add some callbacks:</p>
+
+<pre>
+  $.cacheImage('/path/to/image.png', {
+    load : function (e) { console.log('Loaded',  this, e); },
+    error: function (e) { console.log('Error',   this, e); },
+    abort: function (e) { console.log('Aborted', this, e); }
+  });
+</pre>
+<br />
+
+<h2>Licensing</h2>
+
+<p>
+  Licensed under the <a href="http://www.opensource.org/licenses/mit-license.php">MIT</a>.
+</p>
+
+<p>
+  Copyright &copy; 2009 <a href="http://statelesssystems.com">Stateless Systems</a>.
+</p>
+
